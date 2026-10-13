@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #s4-root {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          font-family: "League Gothic", sans-serif;
+        }
+        #s4-stage {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+        #s4-happy {
+          font-size: 210px;
+          line-height: 0.9;
+          color: #f2e9e4;
+          letter-spacing: 0.04em;
+        }
+        #s4-hw-wrap {
+          position: relative;
+          margin-top: 12px;
+        }
+        .s4-hw {
+          font-size: 244px;
+          line-height: 0.9;
+          letter-spacing: 0.005em;
+          white-space: nowrap;
+        }
+        #s4-hw {
+          position: relative;
+          color: #ff2a2a;
+        }
+        .s4-echo {
+          position: absolute;
+          left: 0;
+          top: 0;
+          color: #5a070c;
+        }
+        .s4-spark {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: #ff5a3c;
+          box-shadow: 0 0 18px 6px rgba(255, 42, 42, 0.6);
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+      </style>
+
+      <div id="s4-root" data-composition-id="s4-happy-halloween" data-width="1080" data-height="1920">
+        <div id="s4-sparks" aria-hidden="true"></div>
+        <div id="s4-stage">
+          <div id="s4-happy">HAPPY</div>
+          <div id="s4-hw-wrap">
+            <div class="s4-hw s4-echo" id="s4-echo2" aria-hidden="true" data-layout-ignore>HALLOWEEN</div>
+            <div class="s4-hw s4-echo" id="s4-echo1" aria-hidden="true" data-layout-ignore>HALLOWEEN</div>
+            <div class="s4-hw" id="s4-hw" data-layout-allow-overlap>HALLOWEEN</div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          // particle-burst: fixed pool, index-seeded, pure ballistic function of time
+          const rnd = (i, k) => {
+            const s = Math.sin(i * 127.1 + k * 311.7) * 43758.5453;
+            return s - Math.floor(s);
+          };
+          const N = 26;
+          const host = document.getElementById("s4-sparks");
+          const sparks = [];
+          for (let i = 0; i < N; i++) {
+            const p = document.createElement("div");
+            p.className = "s4-spark";
+            host.appendChild(p);
+            const ang = (i / N) * Math.PI * 2 + rnd(i, 8) * 0.4;
+            const v = 520 + rnd(i, 9) * 620;
+            sparks.push({ el: p, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v - 260 });
+          }
+          const BURST_T = 1.35, BX = 540, BY = 1030, G = 900, LIFE = 2.2;
+          const draw = (t) => {
+            const dt = t - BURST_T;
+            for (let i = 0; i < N; i++) {
+              const p = sparks[i];
+              if (dt < 0 || dt > LIFE) {
+                p.el.style.opacity = "0";
+                continue;
+              }
+              const x = BX + p.vx * dt * 0.62;
+              const y = BY + (p.vy * dt + 0.5 * G * dt * dt) * 0.62;
+              const sc = Math.max(0.2, 1 - dt / LIFE);
+              p.el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) scale(" + sc.toFixed(3) + ")";
+              p.el.style.opacity = (dt < 0.08 ? dt / 0.08 : 1 - dt / LIFE).toFixed(3);
+            }
+          };
+
+          const tl = gsap.timeline({ paused: true });
+          const clock = { t: 0 };
+          tl.fromTo(clock, { t: 0 }, { t: 6.5, duration: 6.5, ease: "none", onUpdate: () => draw(clock.t) }, 0);
+          // kinetic-beat-slam side snap + rise, 3d-text-depth-layers extrusion
+          tl.fromTo("#s4-happy", { x: 900, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 0.2);
+          tl.fromTo("#s4-hw", { y: 220, scale: 0.85, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.6)" }, 0.85);
+          tl.fromTo("#s4-echo1", { x: 0, y: 0, opacity: 0 }, { x: 9, y: 9, opacity: 1, duration: 0.5, ease: "power3.out" }, 1.3);
+          tl.fromTo("#s4-echo2", { x: 0, y: 0, opacity: 0 }, { x: 18, y: 18, opacity: 0.6, duration: 0.6, ease: "power3.out" }, 1.4);
+          tl.fromTo("#s4-stage", { scale: 1, opacity: 1 }, { scale: 1.04, duration: 4.6, ease: "sine.inOut" }, 1.4);
+          tl.to("#s4-stage", { opacity: 0, scale: 0.9, duration: 0.5, ease: "power2.in" }, 6.0);
+          draw(0);
+          window.__timelines["s4-happy-halloween"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

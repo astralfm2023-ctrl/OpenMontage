@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #s3-root {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          font-family: "League Gothic", sans-serif;
+        }
+        #s3-stage {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+        #s3-wrap {
+          position: relative;
+        }
+        .s3-wp {
+          font-size: 236px;
+          line-height: 0.9;
+          letter-spacing: 0.01em;
+          white-space: nowrap;
+        }
+        #s3-word {
+          position: relative;
+          color: #f2e9e4;
+        }
+        #s3-word span {
+          display: inline-block;
+          opacity: 0;
+        }
+        .s3-echo {
+          position: absolute;
+          left: 0;
+          top: 0;
+          color: #c3121b;
+        }
+        #s3-tag {
+          margin-top: 48px;
+          font-family: "Space Mono", monospace;
+          font-size: 30px;
+          letter-spacing: 0.3em;
+          color: #ff2a2a;
+        }
+      </style>
+
+      <div id="s3-root" data-composition-id="s3-winkypinky" data-width="1080" data-height="1920">
+        <div id="s3-stage">
+          <div id="s3-wrap">
+            <div class="s3-wp s3-echo" id="s3-echo2" aria-hidden="true" data-layout-ignore>WINKYPINKY</div>
+            <div class="s3-wp s3-echo" id="s3-echo1" aria-hidden="true" data-layout-ignore>WINKYPINKY</div>
+            <div class="s3-wp" id="s3-word" data-layout-allow-overlap><span id="s3-l0">W</span><span id="s3-l1">I</span><span id="s3-l2">N</span><span id="s3-l3">K</span><span id="s3-l4">Y</span><span id="s3-l5">P</span><span id="s3-l6">I</span><span id="s3-l7">N</span><span id="s3-l8">K</span><span id="s3-l9">Y</span></div>
+          </div>
+          <div id="s3-tag">— 03 —</div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          // waterfall-entry letters + 3d-text-depth-layers echo
+          for (let i = 0; i < 10; i++) {
+            const sel = "#s3-l" + i;
+            const at = 0.2 + i * 0.045;
+            tl.set(sel, { opacity: 1 }, at);
+            tl.fromTo(sel, { y: 300, rotation: i % 2 ? 8 : -8 }, { y: 0, rotation: 0, duration: 0.55, ease: "expo.out" }, at);
+          }
+          tl.fromTo("#s3-echo1", { x: 0, y: 0, opacity: 0 }, { x: 10, y: 10, opacity: 0.9, duration: 0.6, ease: "power3.out" }, 0.75);
+          tl.fromTo("#s3-echo2", { x: 0, y: 0, opacity: 0 }, { x: 20, y: 20, opacity: 0.45, duration: 0.7, ease: "power3.out" }, 0.85);
+          tl.fromTo("#s3-tag", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.2);
+          tl.fromTo("#s3-wrap", { scale: 1 }, { scale: 1.05, duration: 4.2, ease: "sine.inOut" }, 1.0);
+          // wink: both I's blink
+          tl.to(["#s3-l1", "#s3-l6"], { scaleY: 0.12, duration: 0.09, ease: "power2.in", yoyo: true, repeat: 1 }, 3.1);
+          tl.to("#s3-stage", { x: -1100, duration: 0.55, ease: "power3.in" }, 5.4);
+          window.__timelines["s3-winkypinky"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>
