@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      :root {
+        --bg: #0b0707;
+        --fg: #f2e9e4;
+        --muted: #b9a9a3;
+        --red: #ff2a2a;
+        --blood: #c3121b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: "League Gothic", sans-serif;
+        color: var(--fg);
+      }
+
+      /* ---------- persistent night ---------- */
+      #bg-fill {
+        position: absolute;
+        inset: 0;
+        background: var(--bg);
+      }
+      #glow {
+        position: absolute;
+        left: -110px;
+        top: 260px;
+        width: 1300px;
+        height: 1300px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(195, 18, 27, 0.42) 0%,
+          rgba(195, 18, 27, 0.16) 38%,
+          rgba(11, 7, 7, 0) 70%
+        );
+      }
+      #moon {
+        position: absolute;
+        left: 90px;
+        top: 460px;
+        width: 900px;
+        height: 900px;
+      }
+      #moon-dash {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 900px;
+        height: 900px;
+      }
+      #moon svg {
+        width: 900px;
+        height: 900px;
+        display: block;
+      }
+      #ghost {
+        position: absolute;
+        left: -560px;
+        top: 760px;
+        width: 1500px;
+        font-size: 420px;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        color: transparent;
+        -webkit-text-stroke: 3px rgba(255, 42, 42, 0.22);
+        transform-origin: 50% 50%;
+        rotate: -90deg;
+        white-space: nowrap;
+      }
+      .ember {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--red);
+        box-shadow: 0 0 14px 4px rgba(255, 42, 42, 0.55);
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+      /* ---------- chrome ---------- */
+      #topbar {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        top: 96px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "Space Mono", monospace;
+        font-size: 28px;
+        letter-spacing: 0.12em;
+        color: var(--fg);
+      }
+      #topbar .dot {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--red);
+        margin-right: 16px;
+        vertical-align: middle;
+      }
+      #toprule {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        top: 160px;
+        height: 3px;
+        background: var(--red);
+        transform-origin: 0 50%;
+      }
+      #progress-track {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        bottom: 168px;
+        height: 4px;
+        background: rgba(242, 233, 228, 0.14);
+      }
+      #progress {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        bottom: 168px;
+        height: 4px;
+        background: var(--red);
+        transform-origin: 0 50%;
+      }
+      #footer {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        bottom: 96px;
+        display: flex;
+        justify-content: space-between;
+        font-family: "Space Mono", monospace;
+        font-size: 24px;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+
+      #fade {
+        position: absolute;
+        inset: 0;
+        background: #000;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="30"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- persistent night layers -->
+      <div id="bg-fill"></div>
+      <div id="glow"></div>
+      <div id="ghost" aria-hidden="true" data-layout-ignore>HALLOWEEN</div>
+      <div id="moon" aria-hidden="true">
+        <svg viewBox="0 0 900 900">
+          <circle cx="450" cy="450" r="372" fill="none" stroke="#c3121b" stroke-width="4" opacity="0.65" />
+        </svg>
+        <div id="moon-dash">
+          <svg viewBox="0 0 900 900">
+            <circle
+              cx="450"
+              cy="450"
+              r="424"
+              fill="none"
+              stroke="#ff2a2a"
+              stroke-width="3"
+              stroke-dasharray="4 22"
+              opacity="0.55"
+            />
+          </svg>
+        </div>
+      </div>
+      <div id="embers" aria-hidden="true"></div>
+
+      <!-- scenes (sub-compositions) -->
+      <div id="s1-malonehouse" data-composition-id="s1-malonehouse" data-composition-src="compositions/scenes/s1-malonehouse.html" data-start="0" data-duration="6" data-track-index="1" data-width="1080" data-height="1920"></div>
+      <div id="s2-x" data-composition-id="s2-x" data-composition-src="compositions/scenes/s2-x.html" data-start="6" data-duration="5" data-track-index="1" data-width="1080" data-height="1920"></div>
+      <div id="s3-winkypinky" data-composition-id="s3-winkypinky" data-composition-src="compositions/scenes/s3-winkypinky.html" data-start="11" data-duration="6" data-track-index="1" data-width="1080" data-height="1920"></div>
+      <div id="s4-happy-halloween" data-composition-id="s4-happy-halloween" data-composition-src="compositions/scenes/s4-happy-halloween.html" data-start="17" data-duration="6.5" data-track-index="1" data-width="1080" data-height="1920"></div>
+      <div id="s5-lockup" data-composition-id="s5-lockup" data-composition-src="compositions/scenes/s5-lockup.html" data-start="23.5" data-duration="6.5" data-track-index="1" data-width="1080" data-height="1920"></div>
+
+      <!-- chrome -->
+      <div id="topbar">
+        <div><span class="dot"></span>MH X WP</div>
+        <div>OCT 31</div>
+      </div>
+      <div id="toprule"></div>
+      <div id="progress-track"></div>
+      <div id="progress"></div>
+      <div id="footer">
+        <div>MALONEHOUSE</div>
+        <div>WINKYPINKY</div>
+      </div>
+
+      <div id="grain-overlay" aria-hidden="true" data-layout-ignore>
+        <div class="grain-texture"></div>
+      </div>
+      <div id="fade"></div>
+    </div>
+
+    <style>
+      @keyframes hf-grain-noise {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        10% {
+          transform: translate(-5%, -5%);
+        }
+        20% {
+          transform: translate(-10%, 5%);
+        }
+        30% {
+          transform: translate(5%, -10%);
+        }
+        40% {
+          transform: translate(-5%, 15%);
+        }
+        50% {
+          transform: translate(-10%, 5%);
+        }
+        60% {
+          transform: translate(15%, 0);
+        }
+        70% {
+          transform: translate(0, 10%);
+        }
+        80% {
+          transform: translate(-15%, 0);
+        }
+        90% {
+          transform: translate(10%, 5%);
+        }
+      }
+      #grain-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      #grain-overlay .grain-texture {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        opacity: 0.14;
+        animation: hf-grain-noise 0.5s steps(1) infinite;
+      }
+    </style>
+
+    <script>
+      (function () {
+        const W = 1080;
+        const H = 1920;
+        const DUR = 30;
+
+        // deterministic hash → [0,1)
+        const rnd = (i, k) => {
+          const s = Math.sin(i * 127.1 + k * 311.7) * 43758.5453;
+          return s - Math.floor(s);
+        };
+
+        // ---- embers (ambient, whole film) ----
+        const EMBERS = 30;
+        const emberHost = document.getElementById("embers");
+        const embers = [];
+        for (let i = 0; i < EMBERS; i++) {
+          const e = document.createElement("div");
+          e.className = "ember";
+          const s = 0.4 + rnd(i, 1) * 0.9;
+          e.style.width = e.style.height = Math.round(6 + s * 8) + "px";
+          emberHost.appendChild(e);
+          embers.push({
+            el: e,
+            x: 60 + rnd(i, 2) * (W - 120),
+            speed: 60 + rnd(i, 3) * 110, // px / s upward
+            phase: rnd(i, 4) * (H + 200),
+            sway: 20 + rnd(i, 5) * 50,
+            swayF: 0.4 + rnd(i, 6) * 0.9,
+            a: 0.35 + rnd(i, 7) * 0.55,
+          });
+        }
+
+        const drive = (t) => {
+          for (let i = 0; i < EMBERS; i++) {
+            const m = embers[i];
+            const span = H + 200;
+            const y = H + 100 - ((m.phase + t * m.speed) % span);
+            const x = m.x + Math.sin(t * m.swayF + i) * m.sway;
+            // fade in over first 1.2s, flicker gently
+            const fadeIn = Math.min(1, t / 1.2);
+            const fl = 0.75 + 0.25 * Math.sin(t * 3.1 + i * 1.7);
+            m.el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
+            m.el.style.opacity = (m.a * fadeIn * fl).toFixed(3);
+          }
+        };
+
+        const tl = gsap.timeline({ paused: true });
+
+        // ================= persistent ambience =================
+        const clock = { t: 0 };
+        tl.fromTo(
+          clock,
+          { t: 0 },
+          { t: DUR, duration: DUR, ease: "none", onUpdate: () => drive(clock.t) },
+          0,
+        );
+        tl.fromTo("#glow", { scale: 0.9, opacity: 0.75 }, { scale: 1.08, opacity: 1, duration: 3, ease: "sine.inOut", yoyo: true, repeat: 9 }, 0);
+        tl.fromTo("#moon-dash", { rotation: 0 }, { rotation: 90, duration: DUR, ease: "none" }, 0);
+        tl.fromTo("#moon", { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: 2.4, ease: "power2.out" }, 0);
+        tl.fromTo("#ghost", { y: 260 }, { y: -260, duration: DUR, ease: "none" }, 0);
+        tl.fromTo("#toprule", { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: "expo.out" }, 0.2);
+        tl.fromTo("#topbar", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.35);
+        tl.fromTo("#footer", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.5);
+        tl.fromTo("#progress", { scaleX: 0 }, { scaleX: 1, duration: DUR, ease: "none" }, 0);
+
+        tl.fromTo("#fade", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.in" }, 29.2);
+
+        drive(0);
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+  </body>
+</html>
